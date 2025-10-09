@@ -1,6 +1,18 @@
-import React from 'react';
+// src/components/Hero.tsx
+import React, { useEffect } from 'react';
+import { analytics } from '../utils/analytics';
 
 const Hero = () => {
+  useEffect(() => {
+    // Initialize tracking
+    analytics.trackScrollDepth();
+    analytics.trackTimeOnPage();
+  }, []);
+
+  const handleCTAClick = (location: string) => {
+    analytics.trackCTAClick(location);
+  };
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-white to-purple-50">
       {/* Geometric background pattern */}
@@ -29,27 +41,25 @@ const Hero = () => {
             in 20 seconds
           </h1>
           
-<p className="text-xl lg:text-2xl text-gray-600 mb-6 max-w-3xl mx-auto leading-relaxed">
-  Safe, fast & free. <br />
-  Create your Polygon Account to start using Web3 and DeFi today.
-</p>
+          <p className="text-xl lg:text-2xl text-gray-600 mb-6 max-w-3xl mx-auto leading-relaxed">
+            Safe, fast & free. <br />
+            Create your Polygon Account to start using Web3 and DeFi today.
+          </p>
 
-<div className="flex flex-col items-center gap-3 mb-8">
-  <a
-    href="https://app.polygon.ac"
-    className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-semibold rounded-xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-  >
-    Start now
-  </a>
+          <div className="flex flex-col items-center gap-3 mb-8">
+            <a
+              href={analytics.getAppURL('polygon.ac')}
+              onClick={() => handleCTAClick('hero_primary')}
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-semibold rounded-xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+            >
+              Start now
+            </a>
 
-  <p className="text-xl lg:text-2xl text-purple-600 leading-relaxed text-center m-0">
-    Enter the PolyPrize Raffle to win $100 <br />
-    → by <strong>Midnight Oct 13, 2025</strong> ←
-  </p>
-</div>
-
-
-
+            <p className="text-xl lg:text-2xl text-purple-600 leading-relaxed text-center m-0">
+              Enter the PolyPrize Raffle to win $100 <br />
+              → by <strong>Midnight Oct 13, 2025</strong> ←
+            </p>
+          </div>
 
           {/* Visual representation of the app */}
           <div className="relative max-w-md mx-auto">
