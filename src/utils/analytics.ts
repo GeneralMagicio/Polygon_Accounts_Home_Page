@@ -10,51 +10,119 @@ interface ReferralData {
 
 export class AnalyticsTracker {
   private referralData: ReferralData | null = null;
+  private isStorageAvailable: boolean = false;
 
   constructor() {
+    this.isStorageAvailable = this.checkStorageAvailability();
     this.initializeTracking();
+  }
+
+  /**
+   * Check if we're in a browser environment with working sessionStorage
+   */
+  private checkStorageAvailability(): boolean {
+    try {
+      if (typeof window === 'undefined' || typeof sessionStorage === 'undefined') {
+        return false;
+      }
+      
+      // Test if sessionStorage is actually writable (fails in Safari private mode)
+      const testKey = '__storage_test__';
+      sessionStorage.setItem(testKey, 'test');
+      sessionStorage.removeItem(testKey);
+      return true;
+    } catch (e) {
+      // Storage is unavailable or throws (Safari private mode, SSR, etc.)
+      return false;
+    }
+  }
+
+  /**
+   * Safely get item from sessionStorage
+   */
+  private getStorageItem(key: string): string | null {
+    if (!this.isStorageAvailable) {
+      return null;
+    }
+    
+    try {
+      return sessionStorage.getItem(key);
+    } catch (e) {
+      console.warn('Failed to read from sessionStorage:', e);
+      return null;
+    }
+  }
+
+  /**
+   * Safely set item in sessionStorage
+   */
+  private setStorageItem(key: string, value: string): void {
+    if (!this.isStorageAvailable) {
+      return;
+    }
+    
+    try {
+      sessionStorage.setItem(key, value);
+    } catch (e) {
+      console.warn('Failed to write to sessionStorage:', e);
+      // Continue without storage - referral data will still work in memory
+    }
   }
 
   /**
    * Initialize tracking on page load
    */
   private initializeTracking(): void {
-    // Capture URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    
-    // Check for referral code
-    const refCode = urlParams.get('ref') || urlParams.get('referral');
-    
-    // UTM parameters
-    const utmSource = urlParams.get('utm_source');
-    const utmMedium = urlParams.get('utm_medium');
-    const utmCampaign = urlParams.get('utm_campaign');
+    // Guard against SSR/non-browser environments
+    if (typeof window === 'undefined') {
+      return;
+    }
 
-    if (refCode || utmSource) {
-      this.referralData = {
-        code: refCode || '',
-        source: utmSource || 'direct',
-        medium: utmMedium || 'none',
-        campaign: utmCampaign || 'none',
-        timestamp: Date.now()
-      };
-
-      // Store in sessionStorage for duration of session
-      sessionStorage.setItem('polygon_referral', JSON.stringify(this.referralData));
+    try {
+      // Capture URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
       
-      // Track the referral event
-      this.trackEvent('referral_captured', {
-        referral_code: refCode,
-        utm_source: utmSource,
-        utm_medium: utmMedium,
-        utm_campaign: utmCampaign
-      });
-    } else {
-      // Try to retrieve existing referral data from session
-      const stored = sessionStorage.getItem('polygon_referral');
-      if (stored) {
-        this.referralData = JSON.parse(stored);
+      // Check for referral code
+      const refCode = urlParams.get('ref') || urlParams.get('referral');
+      
+      // UTM parameters
+      const utmSource = urlParams.get('utm_source');
+      const utmMedium = urlParams.get('utm_medium');
+      const utmCampaign = urlParams.get('utm_campaign');
+
+      if (refCode || utmSource) {
+        this.referralData = {
+          code: refCode || '',
+          source: utmSource || 'direct',
+          medium: utmMedium || 'none',
+          campaign: utmCampaign || 'none',
+          timestamp: Date.now()
+        };
+
+        // Store in sessionStorage for duration of session (if available)
+        this.setStorageItem('polygon_referral', JSON.stringify(this.referralData));
+        
+        // Track the referral event
+        this.trackEvent('referral_captured', {
+          referral_code: refCode,
+          utm_source: utmSource,
+          utm_medium: utmMedium,
+          utm_campaign: utmCampaign
+        });
+      } else {
+        // Try to retrieve existing referral data from session
+        const stored = this.getStorageItem('polygon_referral');
+        if (stored) {
+          try {
+            this.referralData = JSON.parse(stored);
+          } catch (e) {
+            console.warn('Failed to parse stored referral data:', e);
+          }
+        }
       }
+    } catch (e) {
+      console.warn('Analytics initialization failed:', e);
+      // Continue without crashing - analytics is not critical
     }
   }
 
