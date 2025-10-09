@@ -21,7 +21,7 @@ const Hero = () => {
             />
           </div>
 
-          <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+          <h1 className="text-3xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
             Create your{' '}
             <span className="bg-gradient-to-r from-purple-600 to-purple-500 bg-clip-text text-transparent">
               Polygon Account
@@ -29,23 +29,27 @@ const Hero = () => {
             in 20 seconds
           </h1>
           
-          <p className="text-xl lg:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Safe, fast & free. Create your Polygon Account to start using defi today.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-            <a
-              href="https://app.polygon.ac"
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-semibold rounded-xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              Start now
-            </a>
-            
-            <div className="flex items-center text-gray-500 text-sm">
-              <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-              Free transaction fees for a limited time
-            </div>
-          </div>
+<p className="text-xl lg:text-2xl text-gray-600 mb-6 max-w-3xl mx-auto leading-relaxed">
+  Safe, fast & free. <br />
+  Create your Polygon Account to start using Web3 and DeFi today.
+</p>
+
+<div className="flex flex-col items-center gap-3 mb-8">
+  <a
+    href="https://app.polygon.ac"
+    className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-semibold rounded-xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+  >
+    Start now
+  </a>
+
+  <p className="text-xl lg:text-2xl text-purple-600 leading-relaxed text-center m-0">
+    Enter the PolyPrize Raffle to win $100 <br />
+    → by <strong>Midnight Oct 13, 2025</strong> ←
+  </p>
+</div>
+
+
+
 
           {/* Visual representation of the app */}
           <div className="relative max-w-md mx-auto">
