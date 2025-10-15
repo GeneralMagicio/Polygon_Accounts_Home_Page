@@ -56,8 +56,7 @@ const Hero = () => {
             </a>
 
             <p className="text-xl lg:text-2xl text-purple-600 leading-relaxed text-center m-0">
-              Enter the PolyPrize Raffle to win $100 <br />
-              → by <strong>Midnight Oct 13, 2025</strong> ←
+              Claim your free PolyPrize NFT 
             </p>
           </div>
 
